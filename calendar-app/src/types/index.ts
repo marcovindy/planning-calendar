@@ -1,5 +1,3 @@
-import type { ReactNode } from "react";
-
 export interface Order {
   id: string;
   code: string;
@@ -7,13 +5,23 @@ export interface Order {
   parentId?: string;
 }
 
+export type Status = "new" | "in-progress" | "completed";
+
 export interface Term {
   id: string;
   orderId: string;
   code: string;
   startDate: string;
   endDate: string;
-  status: "new" | "in-progress" | "completed";
+  status: Status;
+}
+
+export interface AddTermData {
+  orderId: string;
+  startDate: string;
+  endDate: string;
+  status: Status;
+  code: string;
 }
 
 export interface SchedulerViewport {

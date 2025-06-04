@@ -7,12 +7,15 @@ import { eachDayOfInterval } from "date-fns";
 import type { SchedulerViewport, Order, Term } from "../../types";
 import { createDimensionStyle } from "@/utils/styles";
 import { dateUtils } from "@/utils/date";
+import { useState } from "react";
+import { useModal } from "@/hooks/useModal";
 
 export const SchedulerGrid: React.FC<{
   viewport: SchedulerViewport;
   orders: Order[];
   terms: Term[];
-}> = ({ viewport, orders, terms }) => {
+  onCellClick: (orderId: string, date: Date) => void;
+}> = ({ viewport, orders, terms, onCellClick }) => {
   const days = eachDayOfInterval({
     start: dateUtils.toDate(viewport.startDate),
     end: dateUtils.toDate(viewport.endDate)
@@ -38,6 +41,7 @@ export const SchedulerGrid: React.FC<{
           orders={orders}
           terms={terms}
           days={days}
+          onCellClick={onCellClick}
         />
       </div>
     </div>

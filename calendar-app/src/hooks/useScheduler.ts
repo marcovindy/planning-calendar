@@ -6,6 +6,7 @@ import { SCHEDULER_CONFIG } from "@/config/scheduler";
 import { useViewport } from "./useViewport";
 import { dateUtils } from "@/utils/date";
 import { useTerms } from "./useTerms";
+import type { OrderFormData } from "@/schemas/order";
 
 export const useScheduler = () => {
   const { viewport, moveViewport } = useViewport({
@@ -19,9 +20,19 @@ export const useScheduler = () => {
     )
   });
 
-  const [orders] = useState<Order[]>(sampleOrders);
+  const [orders, setOrders] = useState<Order[]>(sampleOrders);
   const { terms, updateTerm, moveTerm, addTerm, deleteTerm } =
     useTerms(sampleTerms);
+
+  const addOrder = useCallback((data: OrderFormData) => {
+    const newOrder: Order = {
+      id: `o${Date.now()}`,
+      code: data.code,
+      name: data.name
+    };
+
+    setOrders((prev) => [...prev, newOrder]);
+  }, []);
 
   const handleDragEnd = useCallback(
     (event: DragEndEvent) => {
@@ -59,6 +70,7 @@ export const useScheduler = () => {
     updateTerm,
     moveTerm,
     addTerm,
-    deleteTerm
+    deleteTerm,
+    addOrder
   };
 };

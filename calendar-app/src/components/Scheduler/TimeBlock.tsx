@@ -45,8 +45,12 @@ export const TimeBlock: React.FC<{
       ref={setNodeRef}
       {...listeners}
       {...attributes}
-      className={`absolute h-[80%] top-[10%] rounded-md cursor-move
-        ${getStatusColor(term.status)}`}
+      className={`
+        absolute h-[80%] top-[10%] rounded-md cursor-move
+        z-50 
+                pointer-events-auto 
+        ${getStatusColor(term.status)}
+      `}
       style={style}
       title={termLabel}
     >

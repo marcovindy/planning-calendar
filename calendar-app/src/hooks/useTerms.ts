@@ -1,4 +1,4 @@
-import type { Term } from "@/types";
+import type { AddTermData, Term } from "@/types";
 import { dateUtils } from "@/utils/date";
 import { addDays, differenceInDays } from "date-fns";
 import { useCallback, useState } from "react";
@@ -12,16 +12,16 @@ export const useTerms = (initialTerms: Term[]) => {
     );
   }, []);
 
-  const addTerm = useCallback((newTerm: Omit<Term, "id">) => {
+  const addTerm = useCallback((data: AddTermData) => {
     const id = `t${Date.now()}`;
 
     setTerms((prev) => {
       const hasOverlap = prev.some(
         (t) =>
-          t.orderId === newTerm.orderId &&
+          t.orderId === data.orderId &&
           dateUtils.hasOverlap(
-            dateUtils.toDate(newTerm.startDate),
-            dateUtils.toDate(newTerm.endDate),
+            dateUtils.toDate(data.startDate),
+            dateUtils.toDate(data.endDate),
             dateUtils.toDate(t.startDate),
             dateUtils.toDate(t.endDate)
           )
@@ -32,7 +32,7 @@ export const useTerms = (initialTerms: Term[]) => {
         return prev;
       }
 
-      return [...prev, { ...newTerm, id }];
+      return [...prev, { ...data, id }];
     });
   }, []);
 
