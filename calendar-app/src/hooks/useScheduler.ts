@@ -1,4 +1,3 @@
-// src/hooks/useScheduler.ts
 import { useState, useCallback } from "react";
 import type { DragEndEvent } from "@dnd-kit/core";
 import type { Order } from "../types";
@@ -30,17 +29,25 @@ export const useScheduler = () => {
       if (!over) return;
 
       const termId = active.id as string;
-      const [year, month, day, orderId] = (over.id as string).split("-");
+      const [year, month, day, targetOrderId] = (over.id as string).split("-");
       const newDateString = `${year}-${month}-${day}`;
+
+      const term = terms.find((t) => t.id === termId);
+      if (!term) return;
+
+      if (term.orderId !== targetOrderId) {
+        console.warn("Cannot move term to different order");
+        return;
+      }
 
       if (!dateUtils.isValid(newDateString)) {
         console.error("Invalid date format:", newDateString);
         return;
       }
 
-      moveTerm(termId, newDateString, orderId);
+      moveTerm(termId, newDateString);
     },
-    [moveTerm]
+    [moveTerm, terms]
   );
 
   return {

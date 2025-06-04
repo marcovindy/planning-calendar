@@ -12,34 +12,71 @@ export const useTerms = (initialTerms: Term[]) => {
     );
   }, []);
 
-  const moveTerm = useCallback(
-    (termId: string, newStartDate: string, newOrderId: string) => {
-      setTerms((prev) => {
-        const termToMove = prev.find((t) => t.id === termId);
-        if (!termToMove) return prev;
+  const addTerm = useCallback((newTerm: Omit<Term, "id">) => {
+    const id = `t${Date.now()}`;
 
-        const duration = differenceInDays(
-          dateUtils.toDate(termToMove.endDate),
-          dateUtils.toDate(termToMove.startDate)
-        );
+    setTerms((prev) => {
+      const hasOverlap = prev.some(
+        (t) =>
+          t.orderId === newTerm.orderId &&
+          dateUtils.hasOverlap(
+            dateUtils.toDate(newTerm.startDate),
+            dateUtils.toDate(newTerm.endDate),
+            dateUtils.toDate(t.startDate),
+            dateUtils.toDate(t.endDate)
+          )
+      );
 
-        const newStart = dateUtils.toDate(newStartDate);
-        const newEnd = addDays(newStart, duration);
+      if (hasOverlap) {
+        console.warn("Terms cannot overlap within the same order");
+        return prev;
+      }
 
-        return prev.map((term) =>
-          term.id === termId
-            ? {
-                ...term,
-                orderId: newOrderId,
-                startDate: dateUtils.toString(newStart),
-                endDate: dateUtils.toString(newEnd)
-              }
-            : term
-        );
-      });
-    },
-    []
-  );
+      return [...prev, { ...newTerm, id }];
+    });
+  }, []);
+
+  const moveTerm = useCallback((termId: string, newStartDate: string) => {
+    setTerms((prev) => {
+      const termToMove = prev.find((t) => t.id === termId);
+      if (!termToMove) return prev;
+
+      const duration = differenceInDays(
+        dateUtils.toDate(termToMove.endDate),
+        dateUtils.toDate(termToMove.startDate)
+      );
+
+      const newStart = dateUtils.toDate(newStartDate);
+      const newEnd = addDays(newStart, duration);
+
+      const hasOverlap = prev.some(
+        (t) =>
+          t.id !== termId &&
+          t.orderId === termToMove.orderId &&
+          dateUtils.hasOverlap(
+            newStart,
+            newEnd,
+            dateUtils.toDate(t.startDate),
+            dateUtils.toDate(t.endDate)
+          )
+      );
+
+      if (hasOverlap) {
+        console.warn("Terms cannot overlap within the same order");
+        return prev;
+      }
+
+      return prev.map((term) =>
+        term.id === termId
+          ? {
+              ...term,
+              startDate: dateUtils.toString(newStart),
+              endDate: dateUtils.toString(newEnd)
+            }
+          : term
+      );
+    });
+  }, []);
 
   return {
     terms,
