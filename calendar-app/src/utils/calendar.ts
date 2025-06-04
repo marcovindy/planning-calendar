@@ -1,21 +1,28 @@
-import { differenceInDays } from "date-fns/differenceInDays";
-import type { SchedulerViewport, Term } from "../types";
+import type { Term } from "@/types";
+import { differenceInDays, startOfDay } from "date-fns";
 
 export const calculateLeftPosition = (
   date: Date,
-  viewport: SchedulerViewport
+  viewportStart: Date,
+  columnWidth: number
 ): number => {
-  const diffDays = differenceInDays(date, viewport.startDate);
-  return diffDays * viewport.columnWidth;
+  const normalizedDate = startOfDay(date);
+  const normalizedViewportStart = startOfDay(viewportStart);
+  const diffDays = differenceInDays(normalizedDate, normalizedViewportStart);
+
+  return diffDays * columnWidth;
 };
 
 export const calculateWidth = (
   start: Date,
   end: Date,
-  viewport: SchedulerViewport
+  columnWidth: number
 ): number => {
-  const diffDays = differenceInDays(end, start) + 1;
-  return diffDays * viewport.columnWidth;
+  const normalizedStart = startOfDay(start);
+  const normalizedEnd = startOfDay(end);
+  const diffDays = differenceInDays(normalizedEnd, normalizedStart) + 1;
+
+  return diffDays * columnWidth;
 };
 
 export const getStatusColor = (status: Term["status"]): string => {

@@ -8,18 +8,20 @@ export interface Order {
 }
 
 export interface Term {
-  code: ReactNode;
   id: string;
   orderId: string;
-  startDate: Date;
-  endDate: Date;
+  code: string;
+  startDate: string;
+  endDate: string;
   status: "new" | "in-progress" | "completed";
 }
 
 export interface SchedulerViewport {
-  startDate: Date;
-  endDate: Date;
+  startDate: string;
+  endDate: string;
   columnWidth: number;
   rowHeight: number;
   label: string;
 }
+
+export type DateString = string;

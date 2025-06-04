@@ -5,7 +5,10 @@ import {
   calculateWidth,
   getStatusColor
 } from "../../utils/calendar";
-import { format } from "date-fns";
+import { format, parse } from "date-fns";
+
+const toDate = (dateString: string) =>
+  parse(dateString, "yyyy-MM-dd", new Date());
 
 export const TimeBlock: React.FC<{
   term: Term;
@@ -16,14 +19,22 @@ export const TimeBlock: React.FC<{
     data: term
   });
 
-  const termLabel = `${format(term.startDate, "d.M.yyyy")} - ${format(
-    term.endDate,
+  const startDate = toDate(term.startDate);
+  const endDate = toDate(term.endDate);
+  const viewportStartDate = toDate(viewport.startDate);
+
+  const termLabel = `${format(startDate, "d.M.yyyy")} - ${format(
+    endDate,
     "d.M.yyyy"
   )}`;
 
   const style = {
-    left: calculateLeftPosition(term.startDate, viewport),
-    width: calculateWidth(term.startDate, term.endDate, viewport),
+    left: calculateLeftPosition(
+      startDate,
+      viewportStartDate,
+      viewport.columnWidth
+    ),
+    width: calculateWidth(startDate, endDate, viewport.columnWidth),
     transform: transform
       ? `translate3d(${transform.x}px, ${transform.y}px, 0)`
       : undefined
