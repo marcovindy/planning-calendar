@@ -1,5 +1,5 @@
 import type { Order } from "../../types";
-import { getHeightStyle } from "@/utils/styles";
+import { createDimensionStyle } from "@/utils/styles";
 
 interface OrdersListProps {
   orders: Order[];
@@ -12,7 +12,7 @@ export const OrdersList: React.FC<OrdersListProps> = ({ orders }) => {
         <div
           key={order.id}
           className="flex items-center border-b p-2"
-          style={getHeightStyle("rowHeight")}
+          style={createDimensionStyle("rowHeight", "height")}
         >
           <div>
             <div className="font-medium">{order.code}</div>

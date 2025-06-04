@@ -1,6 +1,33 @@
+import { useDroppable } from "@dnd-kit/core";
 import type { SchedulerViewport, Order, Term } from "../../types";
 import { TimeBlock } from "./TimeBlock";
-import { getDimensionStyle, getHeightStyle } from "@/utils/styles";
+import {
+  createDimensionStyle,
+  getDimensionStyle,
+  getHeightStyle
+} from "@/utils/styles";
+import { format } from "date-fns";
+
+interface DroppableColumnProps {
+  day: Date;
+  orderId: string;
+}
+
+const DroppableColumn: React.FC<DroppableColumnProps> = ({ day, orderId }) => {
+  const dateString = format(day, "yyyy-MM-dd");
+
+  const { setNodeRef, isOver } = useDroppable({
+    id: `${dateString}-${orderId}`
+  });
+
+  return (
+    <div
+      ref={setNodeRef}
+      className={`border-r flex-shrink-0 h-full ${isOver ? "bg-blue-100" : ""}`}
+      style={createDimensionStyle("columnWidth")}
+    />
+  );
+};
 
 interface TimelineGridProps {
   viewport: SchedulerViewport;
@@ -23,12 +50,12 @@ export const TimelineGrid: React.FC<TimelineGridProps> = ({
           className="relative border-b flex items-center"
           style={getHeightStyle("rowHeight")}
         >
-          <div className="absolute inset-0 flex pointer-events-none">
+          <div className="absolute inset-0 flex">
             {days.map((day) => (
-              <div
+              <DroppableColumn
                 key={day.toISOString()}
-                className="border-r flex-shrink-0 h-full"
-                style={getDimensionStyle("columnWidth")}
+                day={day}
+                orderId={order.id}
               />
             ))}
           </div>

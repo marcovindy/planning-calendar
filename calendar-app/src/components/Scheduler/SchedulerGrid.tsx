@@ -1,10 +1,12 @@
+// src/components/Scheduler/SchedulerGrid.tsx
 import { useDroppable } from "@dnd-kit/core";
 import { OrdersList } from "./OrdersList";
 import { TimelineHeader } from "./TimelineHeader";
 import { TimelineGrid } from "./TimelineGrid";
 import { eachDayOfInterval } from "date-fns";
 import type { SchedulerViewport, Order, Term } from "../../types";
-import { getDimensionStyle, getHeightStyle } from "@/utils/styles";
+import { createDimensionStyle } from "@/utils/styles";
+import { dateUtils } from "@/utils/date";
 
 export const SchedulerGrid: React.FC<{
   viewport: SchedulerViewport;
@@ -12,17 +14,20 @@ export const SchedulerGrid: React.FC<{
   terms: Term[];
 }> = ({ viewport, orders, terms }) => {
   const days = eachDayOfInterval({
-    start: viewport.startDate,
-    end: viewport.endDate
+    start: dateUtils.toDate(viewport.startDate),
+    end: dateUtils.toDate(viewport.endDate)
   });
 
   return (
     <div className="flex flex-1 overflow-hidden">
       <div
         className="flex-shrink-0 border-r bg-white"
-        style={getDimensionStyle("leftColumnWidth")}
+        style={createDimensionStyle("leftColumnWidth")}
       >
-        <div className="border-b" style={getHeightStyle("headerHeight")} />
+        <div
+          className="border-b"
+          style={createDimensionStyle("headerHeight", "height")}
+        />
         <OrdersList orders={orders} />
       </div>
 
