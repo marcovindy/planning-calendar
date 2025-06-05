@@ -7,7 +7,6 @@ import {
   isTermTruncated
 } from "../../utils/calendar";
 import { format, parse } from "date-fns";
-import { useState } from "react";
 import { dateUtils } from "@/utils/date";
 
 export interface TimeBlockProps {

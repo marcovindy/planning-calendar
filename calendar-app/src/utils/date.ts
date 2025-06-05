@@ -1,5 +1,5 @@
 import type { SchedulerViewport, Term } from "@/types";
-import { format, parse } from "date-fns";
+import { format, parse, startOfDay } from "date-fns";
 
 export const dateUtils = {
   toDate: (dateString: string) => parse(dateString, "yyyy-MM-dd", new Date()),
@@ -23,7 +23,14 @@ export const dateUtils = {
   },
 
   hasOverlap: (start1: Date, end1: Date, start2: Date, end2: Date): boolean => {
-    return !(end1 < start2 || start1 > end2);
+    const s1 = startOfDay(start1).getTime();
+    const e1 = startOfDay(end1).getTime();
+    const s2 = startOfDay(start2).getTime();
+    const e2 = startOfDay(end2).getTime();
+
+    const overlap = s2 < e1 && e2 > s1;
+
+    return overlap;
   }
 };
 

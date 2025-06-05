@@ -85,6 +85,7 @@ export const Scheduler: React.FC = () => {
               ...termData,
               orderId: selectedCell.orderId,
               startDate: selectedCell.date,
+              endDate: termData.endDate,
               code: termData.code
             });
           }
