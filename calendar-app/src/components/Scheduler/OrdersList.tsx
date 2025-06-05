@@ -16,41 +16,51 @@ export const OrdersList: React.FC<OrdersListProps> = ({ orders }) => {
     createDimensionStyle("rowHeight", "height")?.height?.toString() || "40"
   );
 
-  const Row = React.useMemo(
-    () =>
-      ({ index, style }: { index: number; style: React.CSSProperties }) => {
-        const order = orders[index];
-        return (
-          <div
-            style={style}
-            key={order.id}
-            className="flex items-center border-b p-2"
-          >
-            <div>
-              <div className="font-medium">{order.code}</div>
-              <div className="text-sm text-gray-600">{order.name}</div>
-            </div>
+  const Row = React.useCallback(
+    ({ index, style }: ListChildComponentProps) => {
+      const order = orders[index];
+      return (
+        <div
+          style={style}
+          key={order.id}
+          className="flex items-center border-b p-2"
+        >
+          <div>
+            <div className="font-medium">{order.code}</div>
+            <div className="text-sm text-gray-600">{order.name}</div>
           </div>
-        );
-      },
+        </div>
+      );
+    },
     [orders]
   );
 
   return (
     <AutoSizer>
-      {({ height, width }) => (
-        <List
-          height={height}
-          width={width}
-          itemCount={orders.length}
-          itemSize={itemHeight}
-          overscanCount={20}
-          initialScrollOffset={0}
-          useIsScrolling
-        >
-          {Row}
-        </List>
-      )}
+      {({ height, width }) => {
+        console.log(`Visible area: ${height}px x ${width}px`);
+        const visibleItems = Math.ceil(height / itemHeight);
+        console.log(`Items that should be visible: ${visibleItems}`);
+
+        return (
+          <List
+            height={height}
+            width={width}
+            itemCount={orders.length}
+            itemSize={itemHeight}
+            overscanCount={20}
+            initialScrollOffset={0}
+            useIsScrolling
+            onItemsRendered={({ visibleStartIndex, visibleStopIndex }) => {
+              console.log(
+                `Rendering items from ${visibleStartIndex} to ${visibleStopIndex}`
+              );
+            }}
+          >
+            {Row}
+          </List>
+        );
+      }}
     </AutoSizer>
   );
 };

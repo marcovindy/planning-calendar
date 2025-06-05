@@ -69,36 +69,35 @@ export const TimelineGrid: React.FC<TimelineGridProps> = ({
   onCellClick,
   style
 }) => {
-  const Row = React.useMemo(
-    () =>
-      ({ index, style }: { index: number; style: React.CSSProperties }) => {
-        const order = orders[index];
-        return (
-          <div style={style} className="relative border-b flex items-center">
-            {/* Droppable Grid */}
-            <div className="absolute inset-0 flex pointer-events-none">
-              {days.map((day) => (
-                <DroppableColumn
-                  key={day.toISOString()}
-                  day={day}
-                  orderId={order.id}
-                  onCellClick={onCellClick}
-                />
-              ))}
-            </div>
-
-            {/* Term Blocks */}
-            <div className="absolute inset-0 pointer-events-none">
-              {terms
-                .filter((term) => term.orderId === order.id)
-                .map((term) => (
-                  <TimeBlock key={term.id} term={term} viewport={viewport} />
-                ))}
-            </div>
+  const Row = React.useCallback(
+    ({ index, style }: { index: number; style: React.CSSProperties }) => {
+      const order = orders[index];
+      return (
+        <div style={style} className="relative border-b flex items-center">
+          {/* Droppable Grid */}
+          <div className="absolute inset-0 flex pointer-events-none">
+            {days.map((day) => (
+              <DroppableColumn
+                key={day.toISOString()}
+                day={day}
+                orderId={order.id}
+                onCellClick={onCellClick}
+              />
+            ))}
           </div>
-        );
-      },
-    [orders, days, terms, viewport]
+
+          {/* Term Blocks */}
+          <div className="absolute inset-0 pointer-events-none">
+            {terms
+              .filter((term) => term.orderId === order.id)
+              .map((term) => (
+                <TimeBlock key={term.id} term={term} viewport={viewport} />
+              ))}
+          </div>
+        </div>
+      );
+    },
+    [orders, days, terms, viewport, onCellClick]
   );
 
   return (
