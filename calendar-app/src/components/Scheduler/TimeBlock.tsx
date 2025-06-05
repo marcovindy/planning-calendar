@@ -50,7 +50,7 @@ export const TimeBlock: React.FC<{
       : undefined
   };
 
-  // Dynamicky sestavíme třídy pro zaoblení
+  
   const roundedClasses = [
     truncated.start ? "" : "rounded-l-md",
     truncated.end ? "" : "rounded-r-md"

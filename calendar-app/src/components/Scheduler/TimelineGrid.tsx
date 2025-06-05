@@ -5,7 +5,6 @@ import { FixedSizeList as List } from "react-window";
 import AutoSizer from "react-virtualized-auto-sizer";
 import React from "react";
 import { DroppableColumn } from "./DropabbleColumn";
-import styles from "./TimelineGrid.module.css";
 import { isTermInViewport } from "@/utils/date";
 
 interface TimelineGridProps {
@@ -66,10 +65,7 @@ export const TimelineGrid: React.FC<TimelineGridProps> = ({
         const finalWidth = Math.max(width, desiredWidth);
 
         return (
-          <div
-            className={styles.listContainer}
-            style={{ width: finalWidth, height }}
-          >
+          <div style={{ width: finalWidth, height }}>
             <List
               height={height || 0}
               width={finalWidth}
