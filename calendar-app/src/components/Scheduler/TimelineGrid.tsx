@@ -7,6 +7,9 @@ import {
   getHeightStyle
 } from "@/utils/styles";
 import { format } from "date-fns";
+import { FixedSizeList as List } from "react-window";
+import AutoSizer from "react-virtualized-auto-sizer";
+import React from "react";
 
 interface DroppableColumnProps {
   day: Date;
@@ -55,6 +58,7 @@ interface TimelineGridProps {
   terms: Term[];
   days: Date[];
   onCellClick: (orderId: string, date: Date) => void;
+  style?: React.CSSProperties;
 }
 
 export const TimelineGrid: React.FC<TimelineGridProps> = ({
@@ -62,38 +66,56 @@ export const TimelineGrid: React.FC<TimelineGridProps> = ({
   orders,
   terms,
   days,
-  onCellClick
+  onCellClick,
+  style
 }) => {
-  return (
-    <div className="relative">
-      {orders.map((order) => (
-        <div
-          key={order.id}
-          className="relative border-b flex items-center"
-          style={getHeightStyle("rowHeight")}
-        >
-          {/* Droppable Grid */}
-          <div className="absolute inset-0 flex pointer-events-none">
-            {days.map((day) => (
-              <DroppableColumn
-                key={day.toISOString()}
-                day={day}
-                orderId={order.id}
-                onCellClick={onCellClick}
-              />
-            ))}
-          </div>
-
-          {/* Term Blocks */}
-          <div className="absolute inset-0 pointer-events-none">
-            {terms
-              .filter((term) => term.orderId === order.id)
-              .map((term) => (
-                <TimeBlock key={term.id} term={term} viewport={viewport} />
+  const Row = React.useMemo(
+    () =>
+      ({ index, style }: { index: number; style: React.CSSProperties }) => {
+        const order = orders[index];
+        return (
+          <div style={style} className="relative border-b flex items-center">
+            {/* Droppable Grid */}
+            <div className="absolute inset-0 flex pointer-events-none">
+              {days.map((day) => (
+                <DroppableColumn
+                  key={day.toISOString()}
+                  day={day}
+                  orderId={order.id}
+                  onCellClick={onCellClick}
+                />
               ))}
+            </div>
+
+            {/* Term Blocks */}
+            <div className="absolute inset-0 pointer-events-none">
+              {terms
+                .filter((term) => term.orderId === order.id)
+                .map((term) => (
+                  <TimeBlock key={term.id} term={term} viewport={viewport} />
+                ))}
+            </div>
           </div>
-        </div>
-      ))}
-    </div>
+        );
+      },
+    [orders, days, terms, viewport]
+  );
+
+  return (
+    <AutoSizer>
+      {({ height, width }) => (
+        <List
+          height={height}
+          width={width}
+          itemCount={orders.length}
+          itemSize={viewport.rowHeight}
+          overscanCount={20}
+          useIsScrolling
+          initialScrollOffset={0}
+        >
+          {Row}
+        </List>
+      )}
+    </AutoSizer>
   );
 };

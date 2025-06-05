@@ -1,7 +1,8 @@
 import { useState, useCallback } from "react";
 import type { DragEndEvent } from "@dnd-kit/core";
 import type { Order } from "../types";
-import { sampleOrders, sampleTerms } from "../mock/sample-data";
+// import { sampleOrders, sampleTerms } from "../mock/sample-data";
+import { mockOrders, mockTerms } from "../mock/data";
 import { SCHEDULER_CONFIG } from "@/config/scheduler";
 import { useViewport } from "./useViewport";
 import { dateUtils } from "@/utils/date";
@@ -20,9 +21,17 @@ export const useScheduler = () => {
     )
   });
 
-  const [orders, setOrders] = useState<Order[]>(sampleOrders);
+  const [scrollPosition, setScrollPosition] = useState(0);
+  const [orders, setOrders] = useState<Order[]>(mockOrders);
   const { terms, updateTerm, moveTerm, addTerm, deleteTerm } =
-    useTerms(sampleTerms);
+    useTerms(mockTerms);
+
+  const handleScroll = useCallback(
+    ({ scrollOffset }: { scrollOffset: number }) => {
+      setScrollPosition(scrollOffset);
+    },
+    []
+  );
 
   const addOrder = useCallback((data: OrderFormData) => {
     const newOrder: Order = {
@@ -71,6 +80,8 @@ export const useScheduler = () => {
     moveTerm,
     addTerm,
     deleteTerm,
-    addOrder
+    addOrder,
+    scrollPosition,
+    handleScroll
   };
 };
