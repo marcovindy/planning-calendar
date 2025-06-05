@@ -11,8 +11,13 @@ export const TimelineHeader: React.FC<TimelineHeaderProps> = ({
   viewport,
   days
 }) => {
+  const totalWidth = days.length * viewport.columnWidth;
+
   return (
-    <div className="flex border-b sticky top-0 bg-white h-12">
+    <div
+      className="flex border-b bg-white h-12 z-10"
+      style={{ width: totalWidth }}
+    >
       {days.map((day) => (
         <div
           key={day.toISOString()}

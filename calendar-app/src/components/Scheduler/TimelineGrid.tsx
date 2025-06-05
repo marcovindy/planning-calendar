@@ -1,56 +1,12 @@
 import { useDroppable } from "@dnd-kit/core";
 import type { SchedulerViewport, Order, Term } from "../../types";
 import { TimeBlock } from "./TimeBlock";
-import {
-  createDimensionStyle,
-  getDimensionStyle,
-  getHeightStyle
-} from "@/utils/styles";
-import { format } from "date-fns";
 import { FixedSizeList as List } from "react-window";
 import AutoSizer from "react-virtualized-auto-sizer";
 import React from "react";
-
-interface DroppableColumnProps {
-  day: Date;
-  orderId: string;
-  onCellClick: (orderId: string, date: Date) => void;
-}
-
-const DroppableColumn: React.FC<DroppableColumnProps> = ({
-  day,
-  orderId,
-  onCellClick
-}) => {
-  const dateString = format(day, "yyyy-MM-dd");
-
-  const { setNodeRef, isOver } = useDroppable({
-    id: `${dateString}-${orderId}`
-  });
-
-  const handleClick = (e: React.MouseEvent<HTMLDivElement>) => {
-    console.log("start");
-    onCellClick(orderId, day);
-  };
-
-  return (
-    <div
-      onClick={handleClick}
-      ref={setNodeRef}
-      className={`
-        border-r flex-shrink-0 h-full 
-        cursor-pointer
-        hover:bg-gray-100
-        transition-colors
-        z-0 
-        relative
-            pointer-events-auto 
-        ${isOver ? "bg-blue-100" : ""}
-      `}
-      style={createDimensionStyle("columnWidth")}
-    />
-  );
-};
+import { DroppableColumn } from "./DropabbleColumn";
+import styles from "./TimelineGrid.module.css";
+import { isTermInViewport } from "@/utils/date";
 
 interface TimelineGridProps {
   viewport: SchedulerViewport;
@@ -89,7 +45,10 @@ export const TimelineGrid: React.FC<TimelineGridProps> = ({
           {/* Term Blocks */}
           <div className="absolute inset-0 pointer-events-none">
             {terms
-              .filter((term) => term.orderId === order.id)
+              .filter(
+                (term) =>
+                  term.orderId === order.id && isTermInViewport(term, viewport)
+              )
               .map((term) => (
                 <TimeBlock key={term.id} term={term} viewport={viewport} />
               ))}
@@ -102,19 +61,27 @@ export const TimelineGrid: React.FC<TimelineGridProps> = ({
 
   return (
     <AutoSizer>
-      {({ height, width }) => (
-        <List
-          height={height}
-          width={width}
-          itemCount={orders.length}
-          itemSize={viewport.rowHeight}
-          overscanCount={20}
-          useIsScrolling
-          initialScrollOffset={0}
-        >
-          {Row}
-        </List>
-      )}
+      {({ height, width }) => {
+        const desiredWidth = days.length * viewport.columnWidth;
+        const finalWidth = Math.max(width, desiredWidth);
+
+        return (
+          <div
+            className={styles.listContainer}
+            style={{ width: finalWidth, height }}
+          >
+            <List
+              height={height || 0}
+              width={finalWidth}
+              itemCount={orders.length}
+              itemSize={viewport.rowHeight}
+              overscanCount={20}
+            >
+              {Row}
+            </List>
+          </div>
+        );
+      }}
     </AutoSizer>
   );
 };
