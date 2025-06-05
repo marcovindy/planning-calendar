@@ -30,6 +30,10 @@ export const SchedulerHeader: React.FC<SchedulerHeaderProps> = ({
           <ChevronRight className="w-4 h-4" />
         </Button>
       </div>
+
+      <div className="font-light text-xs text-gray-500 ">
+        Made by Marek Vaníček
+      </div>
     </div>
   );
 };
