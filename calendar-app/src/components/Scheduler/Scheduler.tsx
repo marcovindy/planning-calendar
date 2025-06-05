@@ -7,7 +7,6 @@ import { useState } from "react";
 import { dateUtils } from "@/utils/date";
 import { AddTermModal } from "../Modals/AddTermModal";
 import { AddOrderModal } from "../Modals/AddOrderModal";
-import type { TermFormData } from "@/schemas/term";
 import type { Term } from "@/types";
 import { EditTermModal } from "../Modals/EditTermModal";
 
@@ -20,7 +19,8 @@ export const Scheduler: React.FC = () => {
     moveViewport,
     updateTerm,
     addOrder,
-    addTerm
+    addTerm,
+    deleteTerm
   } = useScheduler();
 
   const addOrderModal = useModal();
@@ -58,6 +58,7 @@ export const Scheduler: React.FC = () => {
           terms={terms}
           onCellClick={handleCellClick}
           onEditTerm={handleEditTerm}
+          onDeleteTerm={deleteTerm}
         />
       </DndContext>
 

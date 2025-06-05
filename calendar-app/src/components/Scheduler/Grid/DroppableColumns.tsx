@@ -1,10 +1,16 @@
 import { DroppableColumn } from "../DropabbleColumn";
 
-export const DroppableColumns: React.FC<{
+export interface DroppableColumnsProps {
   days: Date[];
   orderId: string;
   onCellClick: (orderId: string, date: Date) => void;
-}> = ({ days, orderId, onCellClick }) => (
+}
+
+export const DroppableColumns: React.FC<DroppableColumnsProps> = ({
+  days,
+  orderId,
+  onCellClick
+}) => (
   <div className="absolute inset-0 flex pointer-events-none">
     {days.map((day) => (
       <DroppableColumn

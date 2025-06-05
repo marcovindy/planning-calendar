@@ -3,19 +3,27 @@ import { eachDayOfInterval } from "date-fns";
 import type { SchedulerViewport, Order, Term } from "../../../types";
 import { dateUtils } from "@/utils/date";
 import { FixedSizeList } from "react-window";
-
-export const HEADER_HEIGHT = 48;
 import { SCHEDULER_CONFIG } from "@/config/scheduler";
 import { GridHeader } from "./GridHeader";
 import { GridRow } from "./GridRow";
 
-export const SchedulerGrid: React.FC<{
+interface SchedulerGridProps {
   viewport: SchedulerViewport;
   orders: Order[];
   terms: Term[];
   onCellClick: (orderId: string, date: Date) => void;
   onEditTerm: (term: Term) => void;
-}> = ({ viewport, orders, terms, onCellClick, onEditTerm }) => {
+  onDeleteTerm: (termId: string) => void;
+}
+
+export const SchedulerGrid: React.FC<SchedulerGridProps> = ({
+  viewport,
+  orders,
+  terms,
+  onCellClick,
+  onEditTerm,
+  onDeleteTerm
+}) => {
   const days = eachDayOfInterval({
     start: dateUtils.toDate(viewport.startDate),
     end: dateUtils.toDate(viewport.endDate)
@@ -31,6 +39,7 @@ export const SchedulerGrid: React.FC<{
         viewport={viewport}
         onCellClick={onCellClick}
         onEditTerm={onEditTerm}
+        onDeleteTerm={onDeleteTerm}
       />
     ),
     [days, terms, viewport, onCellClick, onEditTerm]
@@ -42,7 +51,9 @@ export const SchedulerGrid: React.FC<{
         <div className="relative">
           <GridHeader days={days} viewport={viewport} />
           <FixedSizeList
-            height={window.innerHeight - HEADER_HEIGHT}
+            height={
+              window.innerHeight - SCHEDULER_CONFIG.dimensions.headerHeight
+            }
             width={
               days.length * viewport.columnWidth +
               SCHEDULER_CONFIG.dimensions.leftColumnWidth

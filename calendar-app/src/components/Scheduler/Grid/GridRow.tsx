@@ -10,6 +10,7 @@ interface GridRowProps {
   viewport: SchedulerViewport;
   onCellClick: (orderId: string, date: Date) => void;
   onEditTerm: (term: Term) => void;
+  onDeleteTerm: (termId: string) => void;
 }
 
 export const GridRow: React.FC<GridRowProps> = ({
@@ -19,9 +20,10 @@ export const GridRow: React.FC<GridRowProps> = ({
   terms,
   viewport,
   onCellClick,
-  onEditTerm
+  onEditTerm,
+  onDeleteTerm
 }) => (
-  <div style={style} className="flex">
+  <div style={{ ...style, height: viewport.rowHeight }} className="flex">
     <OrderCell order={order} />
     <GridContent
       order={order}
@@ -30,6 +32,7 @@ export const GridRow: React.FC<GridRowProps> = ({
       viewport={viewport}
       onCellClick={onCellClick}
       onEditTerm={onEditTerm}
+      onDeleteTerm={onDeleteTerm}
     />
   </div>
 );

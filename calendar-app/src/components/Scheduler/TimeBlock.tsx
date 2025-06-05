@@ -8,24 +8,30 @@ import {
 } from "../../utils/calendar";
 import { format, parse } from "date-fns";
 import { useState } from "react";
+import { dateUtils } from "@/utils/date";
 
-const toDate = (dateString: string) =>
-  parse(dateString, "yyyy-MM-dd", new Date());
-
-export const TimeBlock: React.FC<{
+export interface TimeBlockProps {
   term: Term;
   viewport: SchedulerViewport;
   onEdit: (term: Term) => void;
-}> = ({ term, viewport, onEdit }) => {
+  onDelete: (termId: string) => void;
+}
+
+export const TimeBlock: React.FC<TimeBlockProps> = ({
+  term,
+  viewport,
+  onEdit,
+  onDelete
+}) => {
   const { attributes, listeners, setNodeRef, transform } = useDraggable({
     id: term.id,
     data: term
   });
 
-  const startDate = toDate(term.startDate);
-  const endDate = toDate(term.endDate);
-  const viewportStartDate = toDate(viewport.startDate);
-  const viewportEndDate = toDate(viewport.endDate);
+  const startDate = dateUtils.toDate(term.startDate);
+  const endDate = dateUtils.toDate(term.endDate);
+  const viewportStartDate = dateUtils.toDate(viewport.startDate);
+  const viewportEndDate = dateUtils.toDate(viewport.endDate);
 
   const truncated = isTermTruncated(term, viewport);
 
@@ -33,6 +39,9 @@ export const TimeBlock: React.FC<{
     endDate,
     "d.M.yyyy"
   )}`;
+
+  const blockHeight = Math.floor(viewport.rowHeight * 0.8);
+  const topOffset = Math.floor((viewport.rowHeight - blockHeight) / 2);
 
   const style = {
     left: calculateLeftPosition(
@@ -47,6 +56,8 @@ export const TimeBlock: React.FC<{
       viewportEndDate,
       viewport.columnWidth
     ),
+    height: `${blockHeight}px`,
+    top: `${topOffset}px`,
     transform: transform
       ? `translate3d(${transform.x}px, ${transform.y}px, 0)`
       : undefined
@@ -64,13 +75,24 @@ export const TimeBlock: React.FC<{
       ref={setNodeRef}
       style={style}
       className={`
-        absolute h-[80%] top-[10%]
+        absolute
         z-50 pointer-events-auto 
         ${roundedClasses}
         ${getStatusColor(term.status)}
         group
       `}
     >
+      <button
+        onClick={(e) => {
+          e.stopPropagation();
+          onDelete(term.id);
+        }}
+        className="absolute -top-2 -right-2 w-5 h-5 bg-red-400 rounded-full text-white 
+                   flex items-center justify-center opacity-0 group-hover:opacity-100 
+                   transition-opacity z-30 hover:bg-red-500 cursor-pointer"
+      >
+        ×
+      </button>
       <div
         {...attributes}
         {...listeners}

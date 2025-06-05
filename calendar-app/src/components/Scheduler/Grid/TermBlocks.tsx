@@ -2,12 +2,21 @@ import type { SchedulerViewport, Term } from "@/types";
 import { isTermInViewport } from "@/utils/date";
 import { TimeBlock } from "../TimeBlock";
 
-export const TermBlocks: React.FC<{
+export interface TermBlocksProps {
   terms: Term[];
   orderId: string;
   viewport: SchedulerViewport;
   onEditTerm: (term: Term) => void;
-}> = ({ terms, orderId, viewport, onEditTerm }) => (
+  onDeleteTerm: (termId: string) => void;
+}
+
+export const TermBlocks: React.FC<TermBlocksProps> = ({
+  terms,
+  orderId,
+  viewport,
+  onEditTerm,
+  onDeleteTerm
+}) => (
   <div className="absolute inset-0 pointer-events-none">
     {terms
       .filter(
@@ -19,6 +28,7 @@ export const TermBlocks: React.FC<{
           term={term}
           viewport={viewport}
           onEdit={onEditTerm}
+          onDelete={onDeleteTerm}
         />
       ))}
   </div>
