@@ -9,9 +9,9 @@ import {
   SelectTrigger,
   SelectValue
 } from "@/components/ui/select";
-import { FormModal } from "../common/FormModal";
-import { CustomFormField } from "../common/FormField";
-import { FormActions } from "../common/FormActions";
+import { FormModal } from "../common/form/FormModal";
+import { CustomFormField } from "../common/form/FormField";
+import { FormActions } from "../common/form/FormActions";
 
 interface AddOrderModalProps {
   isOpen: boolean;

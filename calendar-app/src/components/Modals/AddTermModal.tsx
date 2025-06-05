@@ -23,9 +23,9 @@ import {
   SelectValue
 } from "@/components/ui/select";
 import { format } from "date-fns";
-import { FormModal } from "../common/FormModal";
-import { CustomFormField } from "../common/FormField";
-import { FormActions } from "../common/FormActions";
+import { FormModal } from "../common/form/FormModal";
+import { CustomFormField } from "../common/form/FormField";
+import { FormActions } from "../common/form/FormActions";
 
 interface AddTermModalProps {
   isOpen: boolean;

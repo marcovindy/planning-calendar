@@ -10,9 +10,9 @@ import {
   FormLabel,
   FormMessage
 } from "@/components/ui/form";
-import { FormModal } from "../common/FormModal";
-import { CustomFormField } from "../common/FormField";
-import { FormActions } from "../common/FormActions";
+import { FormModal } from "../common/form/FormModal";
+import { CustomFormField } from "../common/form/FormField";
+import { FormActions } from "../common/form/FormActions";
 import type { Term } from "@/types";
 import {
   Select,

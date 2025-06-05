@@ -1,5 +1,5 @@
 import { DndContext } from "@dnd-kit/core";
-import { SchedulerGrid } from "./SchedulerGrid";
+import { SchedulerGrid } from "./Grid/SchedulerGrid";
 import { SchedulerHeader } from "./SchedulerHeader";
 import { useScheduler } from "../../hooks/useScheduler";
 import { useModal } from "@/hooks/useModal";
