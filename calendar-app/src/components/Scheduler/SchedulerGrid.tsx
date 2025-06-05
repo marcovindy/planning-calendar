@@ -1,13 +1,15 @@
-import { useRef } from "react";
+import { useCallback } from "react";
 import { eachDayOfInterval } from "date-fns";
-import { OrdersList } from "./OrdersList";
 import { TimelineHeader } from "./TimelineHeader";
-import { TimelineGrid } from "./TimelineGrid";
 import type { SchedulerViewport, Order, Term } from "../../types";
-import { createDimensionStyle } from "@/utils/styles";
-import { dateUtils } from "@/utils/date";
+import { dateUtils, isTermInViewport } from "@/utils/date";
+import { FixedSizeList } from "react-window";
 
 const HEADER_HEIGHT = 48;
+
+import { DroppableColumn } from "./DropabbleColumn";
+import { TimeBlock } from "./TimeBlock";
+import { SCHEDULER_CONFIG } from "@/config/scheduler";
 
 export const SchedulerGrid: React.FC<{
   viewport: SchedulerViewport;
@@ -21,47 +23,97 @@ export const SchedulerGrid: React.FC<{
     end: dateUtils.toDate(viewport.endDate)
   });
 
-  const scrollContainerRef = useRef<HTMLDivElement>(null);
-
-  return (
-    <div className="flex flex-1 overflow-hidden">
-      <div
-        className="flex-shrink-0 border-r bg-white"
-        style={createDimensionStyle("leftColumnWidth")}
-      >
-        <div className="border-b" style={{ height: HEADER_HEIGHT }} />
-        <OrdersList orders={orders} />
-      </div>
-
-      <div className="flex-1 overflow-hidden relative">
-        <div
-          className="absolute inset-0 overflow-auto"
-          ref={scrollContainerRef}
-        >
+  const GridRow = useCallback(
+    ({ index, style }: { index: number; style: React.CSSProperties }) => {
+      const order = orders[index];
+      return (
+        <div style={style} className="flex">
           <div
-            className="sticky top-0 z-10 bg-white"
-            style={{
-              height: HEADER_HEIGHT,
-              width: days.length * viewport.columnWidth
-            }}
+            className="sticky [will-change:transform] [backface-visibility:hidden] left-0 z-20 bg-white border-r flex-shrink-0 border-b"
+            style={{ width: SCHEDULER_CONFIG.dimensions.leftColumnWidth }}
           >
-            <TimelineHeader viewport={viewport} days={days} />
+            <div className="p-2">
+              <div className="font-medium">{order.code}</div>
+              <div className="text-sm text-gray-600">{order.name}</div>
+            </div>
           </div>
 
-          <div
-            style={{ minHeight: `calc(100% - ${HEADER_HEIGHT}px)` }}
-            className="overflex-x-hidden"
-          >
-            <TimelineGrid
-              viewport={viewport}
-              orders={orders}
-              terms={terms}
-              days={days}
-              onCellClick={onCellClick}
-              onEditTerm={onEditTerm}
-            />
+          {/* Grid content */}
+          <div className="relative flex-1 border-b">
+            {/* Droppable Grid */}
+            <div className="absolute inset-0 flex pointer-events-none">
+              {days.map((day) => (
+                <DroppableColumn
+                  key={day.toISOString()}
+                  day={day}
+                  orderId={order.id}
+                  onCellClick={onCellClick}
+                />
+              ))}
+            </div>
+
+            {/* Terms */}
+            <div className="absolute inset-0 pointer-events-none">
+              {terms
+                .filter(
+                  (term) =>
+                    term.orderId === order.id &&
+                    isTermInViewport(term, viewport)
+                )
+                .map((term) => (
+                  <TimeBlock
+                    key={term.id}
+                    term={term}
+                    viewport={viewport}
+                    onEdit={onEditTerm}
+                  />
+                ))}
+            </div>
           </div>
         </div>
+      );
+    },
+    [days, terms, viewport, onCellClick, onEditTerm]
+  );
+
+  return (
+    <div className="flex-1 overflow-hidden">
+      {/* Header */}
+      <div className="sticky top-0 z-30 bg-white flex">
+        <div
+          className="sticky left-0 z-30 bg-white border-r border-b flex-shrink-0"
+          style={{
+            width: SCHEDULER_CONFIG.dimensions.leftColumnWidth,
+            height: HEADER_HEIGHT
+          }}
+        />
+
+        {/* Timeline header */}
+        <div
+          className="flex border-b"
+          style={{
+            width: days.length * viewport.columnWidth,
+            height: HEADER_HEIGHT
+          }}
+        >
+          <TimelineHeader viewport={viewport} days={days} />
+        </div>
+      </div>
+
+      {/* Main scrollable container */}
+      <div className="overflow-auto">
+        <FixedSizeList
+          height={window.innerHeight - HEADER_HEIGHT}
+          width={
+            days.length * viewport.columnWidth +
+            SCHEDULER_CONFIG.dimensions.leftColumnWidth
+          }
+          itemCount={orders.length}
+          itemSize={viewport.rowHeight}
+          overscanCount={5}
+        >
+          {GridRow}
+        </FixedSizeList>
       </div>
     </div>
   );

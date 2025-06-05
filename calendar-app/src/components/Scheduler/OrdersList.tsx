@@ -1,17 +1,25 @@
 import type { Order } from "../../types";
 import {
+  FixedSizeList,
   FixedSizeList as List,
   type ListChildComponentProps
 } from "react-window";
 import { createDimensionStyle } from "@/utils/styles";
 import React from "react";
 import AutoSizer from "react-virtualized-auto-sizer";
+import type { ListRef } from "@/types/list";
 
 interface OrdersListProps {
   orders: Order[];
+  listRef: React.RefObject<ListRef | null>;
+  onScroll: (scrollTop: number) => void;
 }
 
-export const OrdersList: React.FC<OrdersListProps> = ({ orders }) => {
+export const OrdersList: React.FC<OrdersListProps> = ({
+  orders,
+  listRef,
+  onScroll
+}) => {
   const itemHeight = parseInt(
     createDimensionStyle("rowHeight", "height")?.height?.toString() || "40"
   );
@@ -37,30 +45,19 @@ export const OrdersList: React.FC<OrdersListProps> = ({ orders }) => {
 
   return (
     <AutoSizer>
-      {({ height, width }) => {
-        console.log(`Visible area: ${height}px x ${width}px`);
-        const visibleItems = Math.ceil(height / itemHeight);
-        console.log(`Items that should be visible: ${visibleItems}`);
-
-        return (
-          <List
-            height={height}
-            width={width}
-            itemCount={orders.length}
-            itemSize={itemHeight}
-            overscanCount={20}
-            initialScrollOffset={0}
-            useIsScrolling
-            onItemsRendered={({ visibleStartIndex, visibleStopIndex }) => {
-              console.log(
-                `Rendering items from ${visibleStartIndex} to ${visibleStopIndex}`
-              );
-            }}
-          >
-            {Row}
-          </List>
-        );
-      }}
+      {({ height, width }) => (
+        <List
+          ref={listRef}
+          height={height}
+          width={width}
+          itemCount={orders.length}
+          itemSize={itemHeight}
+          overscanCount={5}
+          onScroll={({ scrollOffset }) => onScroll(scrollOffset)}
+        >
+          {Row}
+        </List>
+      )}
     </AutoSizer>
   );
 };

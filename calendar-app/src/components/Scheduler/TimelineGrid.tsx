@@ -1,11 +1,12 @@
 import { useDroppable } from "@dnd-kit/core";
 import type { SchedulerViewport, Order, Term } from "../../types";
 import { TimeBlock } from "./TimeBlock";
-import { FixedSizeList as List } from "react-window";
+import { FixedSizeList, FixedSizeList as List } from "react-window";
 import AutoSizer from "react-virtualized-auto-sizer";
 import React from "react";
 import { DroppableColumn } from "./DropabbleColumn";
 import { isTermInViewport } from "@/utils/date";
+import type { ListRef } from "@/types/list";
 
 interface TimelineGridProps {
   viewport: SchedulerViewport;
@@ -14,7 +15,8 @@ interface TimelineGridProps {
   days: Date[];
   onCellClick: (orderId: string, date: Date) => void;
   onEditTerm: (term: Term) => void;
-  style?: React.CSSProperties;
+  listRef: React.RefObject<ListRef | null>; // Upraveno
+  onScroll: (scrollTop: number) => void;
 }
 
 export const TimelineGrid: React.FC<TimelineGridProps> = ({
@@ -24,7 +26,8 @@ export const TimelineGrid: React.FC<TimelineGridProps> = ({
   days,
   onCellClick,
   onEditTerm,
-  style
+  listRef,
+  onScroll
 }) => {
   const Row = React.useCallback(
     ({ index, style }: { index: number; style: React.CSSProperties }) => {
@@ -74,11 +77,13 @@ export const TimelineGrid: React.FC<TimelineGridProps> = ({
         return (
           <div style={{ width: finalWidth, height }}>
             <List
+              ref={listRef}
               height={height || 0}
               width={finalWidth}
               itemCount={orders.length}
               itemSize={viewport.rowHeight}
-              overscanCount={20}
+              overscanCount={5}
+              onScroll={({ scrollOffset }) => onScroll(scrollOffset)}
             >
               {Row}
             </List>
