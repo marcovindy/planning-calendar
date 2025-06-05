@@ -49,7 +49,7 @@ def generate_terms(orders, terms_per_order=2):
     return terms
 
 def main():
-    orders = generate_orders(20000)
+    orders = generate_orders(10000)
     terms = generate_terms(orders, terms_per_order=2)
 
     data = {
@@ -57,7 +57,7 @@ def main():
         "terms": terms
     }
 
-    output_file = "vystup.json"
+    output_file = "output.json"
     try:
         with open(output_file, "w", encoding="utf-8") as f:
             json.dump(data, f, ensure_ascii=False, indent=4)

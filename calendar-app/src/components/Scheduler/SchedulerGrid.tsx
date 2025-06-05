@@ -14,7 +14,8 @@ export const SchedulerGrid: React.FC<{
   orders: Order[];
   terms: Term[];
   onCellClick: (orderId: string, date: Date) => void;
-}> = ({ viewport, orders, terms, onCellClick }) => {
+  onEditTerm: (term: Term) => void;
+}> = ({ viewport, orders, terms, onCellClick, onEditTerm }) => {
   const days = eachDayOfInterval({
     start: dateUtils.toDate(viewport.startDate),
     end: dateUtils.toDate(viewport.endDate)
@@ -57,6 +58,7 @@ export const SchedulerGrid: React.FC<{
               terms={terms}
               days={days}
               onCellClick={onCellClick}
+              onEditTerm={onEditTerm}
             />
           </div>
         </div>

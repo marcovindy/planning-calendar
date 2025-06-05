@@ -7,6 +7,7 @@ import {
   isTermTruncated
 } from "../../utils/calendar";
 import { format, parse } from "date-fns";
+import { useState } from "react";
 
 const toDate = (dateString: string) =>
   parse(dateString, "yyyy-MM-dd", new Date());
@@ -14,7 +15,8 @@ const toDate = (dateString: string) =>
 export const TimeBlock: React.FC<{
   term: Term;
   viewport: SchedulerViewport;
-}> = ({ term, viewport }) => {
+  onEdit: (term: Term) => void;
+}> = ({ term, viewport, onEdit }) => {
   const { attributes, listeners, setNodeRef, transform } = useDraggable({
     id: term.id,
     data: term
@@ -50,7 +52,6 @@ export const TimeBlock: React.FC<{
       : undefined
   };
 
-  
   const roundedClasses = [
     truncated.start ? "" : "rounded-l-md",
     truncated.end ? "" : "rounded-r-md"
@@ -61,23 +62,54 @@ export const TimeBlock: React.FC<{
   return (
     <div
       ref={setNodeRef}
-      {...listeners}
-      {...attributes}
+      style={style}
       className={`
-        absolute h-[80%] top-[10%] cursor-move
+        absolute h-[80%] top-[10%]
         z-50 pointer-events-auto 
         ${roundedClasses}
         ${getStatusColor(term.status)}
+        group
       `}
-      style={style}
-      title={termLabel}
     >
-      <div className="px-2 truncate">
-        {term.code}
-        <span className="text-xs ml-2 opacity-75">{termLabel}</span>
+      <div
+        {...attributes}
+        {...listeners}
+        className="absolute top-0 bottom-0 w-8 cursor-grab active:cursor-grabbing hover:bg-black/5 z-20 flex items-center justify-center"
+      >
+        <div className="flex flex-col gap-1 opacity-0 group-hover:opacity-60">
+          <div className="w-1 h-1 bg-current rounded-full" />
+          <div className="w-1 h-1 bg-current rounded-full" />
+          <div className="w-1 h-1 bg-current rounded-full" />
+        </div>
       </div>
 
-      {/* Volitelně můžeme přidat vizuální indikátory oříznutí */}
+      <div
+        {...attributes}
+        {...listeners}
+        className="absolute top-0 bottom-0 w-8 right-0 cursor-grab active:cursor-grabbing hover:bg-black/5 z-20 flex items-center justify-center"
+      >
+        <div className="flex flex-col gap-1 opacity-0 group-hover:opacity-60">
+          <div className="w-1 h-1 bg-current rounded-full" />
+          <div className="w-1 h-1 bg-current rounded-full" />
+          <div className="w-1 h-1 bg-current rounded-full" />
+        </div>
+      </div>
+
+      {/* Clickable content */}
+      <div
+        className="absolute inset-x-8 inset-y-0 px-2 z-10 cursor-pointer"
+        onClick={(e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          onEdit(term);
+        }}
+      >
+        <div className="truncate flex items-center h-full">
+          <span>{term.code}</span>
+          <span className="text-xs ml-2 opacity-75">{termLabel}</span>
+        </div>
+      </div>
+
       {truncated.start && (
         <div className="absolute left-0 top-0 h-full w-1 bg-black bg-opacity-20" />
       )}

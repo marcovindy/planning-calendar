@@ -7,6 +7,9 @@ import { useState } from "react";
 import { dateUtils } from "@/utils/date";
 import { AddTermModal } from "../Modals/AddTermModal";
 import { AddOrderModal } from "../Modals/AddOrderModal";
+import type { TermFormData } from "@/schemas/term";
+import type { Term } from "@/types";
+import { EditTermModal } from "../Modals/EditTermModal";
 
 export const Scheduler: React.FC = () => {
   const {
@@ -15,21 +18,29 @@ export const Scheduler: React.FC = () => {
     terms,
     handleDragEnd,
     moveViewport,
+    updateTerm,
     addOrder,
     addTerm
   } = useScheduler();
 
   const addOrderModal = useModal();
   const addTermModal = useModal();
+  const editTermModal = useModal();
   const [selectedCell, setSelectedCell] = useState<{
     orderId: string;
     date: string;
   } | null>(null);
+  const [selectedTerm, setSelectedTerm] = useState<Term | null>(null);
 
   const handleCellClick = (orderId: string, date: Date) => {
     const dateString = dateUtils.toString(date);
     setSelectedCell({ orderId, date: dateString });
     addTermModal.open();
+  };
+
+  const handleEditTerm = (term: Term) => {
+    setSelectedTerm(term);
+    editTermModal.open();
   };
 
   return (
@@ -46,6 +57,7 @@ export const Scheduler: React.FC = () => {
           orders={orders}
           terms={terms}
           onCellClick={handleCellClick}
+          onEditTerm={handleEditTerm}
         />
       </DndContext>
 
@@ -74,6 +86,19 @@ export const Scheduler: React.FC = () => {
           addTermModal.close();
         }}
         initialDate={selectedCell?.date}
+      />
+
+      <EditTermModal
+        isOpen={editTermModal.isOpen}
+        onClose={() => {
+          editTermModal.close();
+          setSelectedTerm(null);
+        }}
+        onSubmit={(termId, updates) => {
+          updateTerm(termId, updates);
+          editTermModal.close();
+        }}
+        term={selectedTerm}
       />
     </div>
   );

@@ -12,7 +12,6 @@ const typedMockData = mockData as MockData;
 export const sampleOrders = typedMockData.orders;
 export const sampleTerms = typedMockData.terms;
 
-// Volitelně můžete přidat validaci
 const validateMockData = (data: unknown): data is MockData => {
   const mockData = data as MockData;
   return (

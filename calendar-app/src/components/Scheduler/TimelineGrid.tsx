@@ -13,6 +13,7 @@ interface TimelineGridProps {
   terms: Term[];
   days: Date[];
   onCellClick: (orderId: string, date: Date) => void;
+  onEditTerm: (term: Term) => void;
   style?: React.CSSProperties;
 }
 
@@ -22,6 +23,7 @@ export const TimelineGrid: React.FC<TimelineGridProps> = ({
   terms,
   days,
   onCellClick,
+  onEditTerm,
   style
 }) => {
   const Row = React.useCallback(
@@ -49,7 +51,12 @@ export const TimelineGrid: React.FC<TimelineGridProps> = ({
                   term.orderId === order.id && isTermInViewport(term, viewport)
               )
               .map((term) => (
-                <TimeBlock key={term.id} term={term} viewport={viewport} />
+                <TimeBlock
+                  key={term.id}
+                  term={term}
+                  viewport={viewport}
+                  onEdit={onEditTerm}
+                />
               ))}
           </div>
         </div>
