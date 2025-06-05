@@ -14,6 +14,8 @@ interface SchedulerGridProps {
   onCellClick: (orderId: string, date: Date) => void;
   onEditTerm: (term: Term) => void;
   onDeleteTerm: (termId: string) => void;
+  onToggleExpand: (orderId: string) => void;
+  isExpanded: (id: string) => boolean;
 }
 
 export const SchedulerGrid: React.FC<SchedulerGridProps> = ({
@@ -22,7 +24,9 @@ export const SchedulerGrid: React.FC<SchedulerGridProps> = ({
   terms,
   onCellClick,
   onEditTerm,
-  onDeleteTerm
+  onDeleteTerm,
+  onToggleExpand,
+  isExpanded
 }) => {
   const days = eachDayOfInterval({
     start: dateUtils.toDate(viewport.startDate),
@@ -30,19 +34,33 @@ export const SchedulerGrid: React.FC<SchedulerGridProps> = ({
   });
 
   const renderRow = useCallback(
-    ({ index, style }: { index: number; style: React.CSSProperties }) => (
-      <GridRow
-        style={style}
-        order={orders[index]}
-        days={days}
-        terms={terms}
-        viewport={viewport}
-        onCellClick={onCellClick}
-        onEditTerm={onEditTerm}
-        onDeleteTerm={onDeleteTerm}
-      />
-    ),
-    [days, terms, viewport, onCellClick, onEditTerm]
+    ({ index, style }: { index: number; style: React.CSSProperties }) => {
+      const order = orders[index];
+      return (
+        <GridRow
+          style={style}
+          order={order}
+          days={days}
+          terms={terms}
+          viewport={viewport}
+          onCellClick={onCellClick}
+          onEditTerm={onEditTerm}
+          onDeleteTerm={onDeleteTerm}
+          onToggleExpand={onToggleExpand}
+          isExpanded={isExpanded(order.id)}
+        />
+      );
+    },
+    [
+      days,
+      terms,
+      viewport,
+      onCellClick,
+      onEditTerm,
+      onDeleteTerm,
+      onToggleExpand,
+      isExpanded
+    ]
   );
 
   return (

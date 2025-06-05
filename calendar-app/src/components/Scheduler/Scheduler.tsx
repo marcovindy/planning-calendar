@@ -20,7 +20,9 @@ export const Scheduler: React.FC = () => {
     updateTerm,
     addOrder,
     addTerm,
-    deleteTerm
+    deleteTerm,
+    toggleExpand,
+    isExpanded
   } = useScheduler();
 
   const addOrderModal = useModal();
@@ -59,6 +61,8 @@ export const Scheduler: React.FC = () => {
           onCellClick={handleCellClick}
           onEditTerm={handleEditTerm}
           onDeleteTerm={deleteTerm}
+          onToggleExpand={toggleExpand}
+          isExpanded={isExpanded}
         />
       </DndContext>
 

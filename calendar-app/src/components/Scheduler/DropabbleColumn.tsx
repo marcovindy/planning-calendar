@@ -29,9 +29,17 @@ export const DroppableColumn: React.FC<DroppableColumnProps> = ({
     <div
       onClick={handleClick}
       ref={setNodeRef}
-      className={`border-r flex-shrink-0 h-full cursor-pointer hover:bg-gray-100 transition-colors relative pointer-events-auto ${
-        isOver ? "bg-blue-100" : ""
-      }`}
+      className={`
+        border-r 
+        flex-shrink-0 
+        h-full 
+        cursor-pointer 
+        hover:bg-gray-100 
+        transition-colors 
+        relative 
+        pointer-events-auto  
+        ${isOver ? "bg-blue-100" : ""}
+      `}
       style={createDimensionStyle("columnWidth")}
     />
   );

@@ -8,6 +8,7 @@ import { useViewport } from "./useViewport";
 import { dateUtils } from "@/utils/date";
 import { useTerms } from "./useTerms";
 import type { OrderFormData } from "@/schemas/order";
+import { useTreeOrders } from "./useTreeOrders";
 
 export const useScheduler = () => {
   const { viewport, moveViewport } = useViewport({
@@ -25,6 +26,7 @@ export const useScheduler = () => {
   const [orders, setOrders] = useState<Order[]>(mockOrders);
   const { terms, updateTerm, moveTerm, addTerm, deleteTerm } =
     useTerms(mockTerms);
+  const { visibleOrders, toggleExpand, isExpanded } = useTreeOrders(orders);
 
   const handleScroll = useCallback(
     ({ scrollOffset }: { scrollOffset: number }) => {
@@ -72,7 +74,7 @@ export const useScheduler = () => {
 
   return {
     viewport,
-    orders,
+    orders: visibleOrders,
     terms,
     handleDragEnd,
     moveViewport,
@@ -82,6 +84,8 @@ export const useScheduler = () => {
     deleteTerm,
     addOrder,
     scrollPosition,
-    handleScroll
+    handleScroll,
+    toggleExpand,
+    isExpanded
   };
 };

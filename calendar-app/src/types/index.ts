@@ -3,6 +3,9 @@ export interface Order {
   code: string;
   name: string;
   parentId?: string;
+  hasChildren?: boolean;
+  isExpanded?: boolean;
+  level?: number;
 }
 
 export type Status = "new" | "in-progress" | "completed";

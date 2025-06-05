@@ -11,6 +11,8 @@ interface GridRowProps {
   onCellClick: (orderId: string, date: Date) => void;
   onEditTerm: (term: Term) => void;
   onDeleteTerm: (termId: string) => void;
+  onToggleExpand: (orderId: string) => void;
+  isExpanded: boolean;
 }
 
 export const GridRow: React.FC<GridRowProps> = ({
@@ -21,10 +23,16 @@ export const GridRow: React.FC<GridRowProps> = ({
   viewport,
   onCellClick,
   onEditTerm,
-  onDeleteTerm
+  onDeleteTerm,
+  onToggleExpand,
+  isExpanded
 }) => (
   <div style={{ ...style, height: viewport.rowHeight }} className="flex">
-    <OrderCell order={order} />
+    <OrderCell
+      order={order}
+      onToggle={onToggleExpand}
+      isExpanded={isExpanded}
+    />
     <GridContent
       order={order}
       days={days}

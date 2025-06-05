@@ -1,6 +1,4 @@
 import type { Order, SchedulerViewport, Term } from "@/types";
-import { DroppableColumns } from "./DroppableColumns";
-import { TermBlocks } from "./TermBlocks";
 import { DroppableColumn } from "../DropabbleColumn";
 import { isTermInViewport } from "@/utils/date";
 import { TimeBlock } from "../TimeBlock";
@@ -41,7 +39,7 @@ export const GridContent: React.FC<GridContentProps> = ({
     </div>
 
     {/* Terms */}
-    <div className="absolute inset-0 h-full">
+    <div className="absolute inset-0 pointer-events-none">
       {terms
         .filter(
           (term) =>
